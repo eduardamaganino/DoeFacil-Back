@@ -10,6 +10,14 @@ from .serializers import UserSerializer, ItemSerializer, DoacaoSerializer
 # Create your views here.
 
 @csrf_exempt
+def authUserApi(request, email, senha):
+    if request.method == 'GET':
+        user = User.objects.get(email=email, senha=senha)
+        user_serializer = UserSerializer(user)
+        return JsonResponse(user_serializer.data, safe=False)
+    return JsonResponse("Failed to Authenticate.", safe=False)
+
+@csrf_exempt
 def userApi(request, id=0):
     if request.method == 'GET':
         if id != 0:
