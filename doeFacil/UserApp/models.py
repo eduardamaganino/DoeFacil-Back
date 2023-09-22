@@ -1,29 +1,31 @@
-from djongo import models
+from django.db import models
 
     
 
 class Item(models.Model):
+    itemId = models.AutoField(primary_key=True, unique=True, serialize=True)
     motivo = models.CharField(max_length=100)
     quantidade = models.CharField(max_length=100)
     fotos = models.CharField(max_length=100)
     tempoDeUso = models.CharField(max_length=100)
     condicao = models.CharField(max_length=100)
-    titulo = models.CharField(max_length=100, primary_key=True, unique=True)
+    titulo = models.CharField(max_length=100)
     categoria = models.CharField(max_length=100)
 
 class User(models.Model):
-    email = models.EmailField(primary_key=True, unique=True)
+    userId = models.AutoField(primary_key=True, unique=True, serialize=True)
+    email = models.EmailField(max_length=100)
     senha = models.CharField(max_length=100)
     nome = models.CharField(max_length=100)
-    foto = models.CharField(max_length=100)
+    foto = models.CharField(max_length=100, blank=True)
     bio = models.TextField()
-    listaDeDoacao = models.CharField(max_length=100) # Alterado para CharField para armazenar a lista de doações
+    listaDeDoacao = models.CharField(max_length=100, null=True) # Alterado para CharField para armazenar a lista de doações
     telefone = models.CharField(max_length=100)
     cpf = models.CharField(max_length=11)  # Alterado para 11 caracteres para representar o CPF
-    nascimento = models.DateField()  # Alterado para DateField para armazenar a data de nascimento
+    nascimento = models.CharField(max_length=20)  # Alterado para DateField para armazenar a data de nascimento
     sexo = models.CharField(max_length=1)  # Alterado para 1 caractere para representar o sexo
-    nota = models.IntegerField()
-    countAvaliacao = models.IntegerField()
+    nota = models.IntegerField(null=True)
+    countAvaliacao = models.IntegerField(null=True)
 
     rua = models.CharField(max_length=100)
     numero = models.IntegerField()
@@ -36,9 +38,10 @@ class User(models.Model):
 
 
 class Doacao(models.Model):
+    doacaoId = models.AutoField(primary_key=True, unique=True, serialize=True)
     item = models.CharField(max_length=100) # Alterado para CharField para armazenar o item
     doador = models.CharField(max_length=100) # Alterado para CharField para armazenar o doador
     donatario = models.CharField(max_length=100) # Alterado para CharField para armazenar o donatário
-    dataDoacao = models.DateField()
+    dataDoacao = models.CharField(max_length=100) # Alterado para CharField para armazenar a data de doação
     recebido = models.CharField(max_length=100)
     pedidos = models.CharField(max_length=100) # Alterado para CharField para armazenar a lista de pedidos

@@ -82,11 +82,9 @@ WSGI_APPLICATION = 'doeFacil.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'djongo',
-        'NAME': 'doeFacil',
+        'NAME': 'doeFacilDB',
         'CLIENT': {
             "host": "mongodb+srv://jotave:gtHoBhw7pFMMJIEH@cluster0.cgvp8s3.mongodb.net/?retryWrites=true&w=majority",
-            "username": "jotave",
-            "password": "gtHoBhw7pFMMJIEH",
             "authMechanism": "SCRAM-SHA-1"
         }
     }
