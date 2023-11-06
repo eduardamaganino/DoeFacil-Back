@@ -1,6 +1,7 @@
 from django.db import models
+from django.contrib.auth.models import User
 
-    
+# Create your models here.
 
 class Item(models.Model):
     itemId = models.AutoField(primary_key=True, unique=True, serialize=True)
@@ -17,7 +18,7 @@ class User(models.Model):
     email = models.EmailField(max_length=100, unique=True)
     senha = models.CharField(max_length=100, unique=True)
     nome = models.CharField(max_length=100)
-    foto = models.CharField(max_length=100, blank=True, null=True)
+    foto = models.FileField(upload_to='media', null=True, blank=True)
     bio = models.TextField()
     listaDeDoacao = models.CharField(max_length=100, null=True, blank=True) # Alterado para CharField para armazenar a lista de doações
     telefone = models.CharField(max_length=100)
@@ -45,3 +46,4 @@ class Doacao(models.Model):
     dataDoacao = models.CharField(max_length=100) # Alterado para CharField para armazenar a data de doação
     recebido = models.CharField(max_length=100)
     pedidos = models.CharField(max_length=100) # Alterado para CharField para armazenar a lista de pedidos
+

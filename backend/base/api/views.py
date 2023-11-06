@@ -1,34 +1,34 @@
-from django.shortcuts import render
-from django.http import HttpResponse
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.parsers import JSONParser
-from django.http.response import JsonResponse
+from django.http import JsonResponse
+from rest_framework.response import Response
 
-from .models import User, Item, Doacao
+
+from base.models import User, Item, Doacao
 from .serializers import UserSerializer, ItemSerializer, DoacaoSerializer
 
 # Create your views here.
 
-@csrf_exempt
-def authUserApi(request, email, senha):
-    if request.method == 'GET':
-        user = User.objects.get(email=email, senha=senha)
-        user_serializer = UserSerializer(user)
-        return JsonResponse(user_serializer.data, safe=False)
-    return JsonResponse("Failed to Authenticate.", safe=False)
-
-@csrf_exempt
+@api_view(['GET', 'POST', 'PUT', 'DELETE'])
+@permission_classes([IsAuthenticated])
 def userApi(request, id=0):
     if request.method == 'GET':
         if id != 0:
             user = User.objects.get(userId=id)
             user_serializer = UserSerializer(user)
-            return JsonResponse(user_serializer.data, safe=False)
+            return Response('Fucniona')
         users = User.objects.all()
         users_serializer = UserSerializer(users, many=True)
         return JsonResponse(users_serializer.data, safe=False)
     elif request.method == 'POST':
         user_data = JSONParser().parse(request)
+        user_serializer = UserSerializer(data=user_data)
+        file = request.FILES['file']
+        mf = file.name.split('.')
+        file.name = str(user_data['userId']) + '.' + mf[1]
         user_serializer = UserSerializer(data=user_data)
         if user_serializer.is_valid():
             user_serializer.save()
@@ -47,7 +47,8 @@ def userApi(request, id=0):
         user.delete()
         return JsonResponse("Deleted Succeffully!", safe=False)
 
-@csrf_exempt
+@api_view(['GET', 'POST', 'PUT', 'DELETE'])
+@permission_classes([IsAuthenticated])
 def itemApi(request, id=0):
     if request.method == 'GET':
         if id != 0:
@@ -59,6 +60,9 @@ def itemApi(request, id=0):
         return JsonResponse(items_serializer.data, safe=False)
     elif request.method == 'POST':
         item_data = JSONParser().parse(request)
+        file = request.FILES['file']
+        mf = file.name.split('.')
+        file.name = str(item_data['itemId']) + '.' + mf[1]
         item_serializer = ItemSerializer(data=item_data)
         if item_serializer.is_valid():
             item_serializer.save()
@@ -77,7 +81,8 @@ def itemApi(request, id=0):
         item.delete()
         return JsonResponse("Deleted Succeffully!", safe=False)
     
-@csrf_exempt
+@api_view(['GET', 'POST', 'PUT', 'DELETE'])
+@permission_classes([IsAuthenticated])
 def doacaoApi(request, id=0):
     if request.method == 'GET':
         if id != 0:
