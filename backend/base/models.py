@@ -5,7 +5,7 @@ from django.contrib.auth.models import AbstractBaseUser
 # Create your models here.
 
 class Item(models.Model):
-    itemId = models.AutoField(primary_key=True, unique=True, serialize=True)
+    id = models.AutoField(primary_key=True, unique=True, serialize=True)
     motivo = models.CharField(max_length=100)
     quantidade = models.CharField(max_length=100, default="1")
     fotos = models.CharField(max_length=100)
@@ -15,7 +15,7 @@ class Item(models.Model):
     categoria = models.CharField(max_length=100)
 
 class User(AbstractBaseUser):
-    userId = models.AutoField(primary_key=True, unique=True, serialize=True)
+    id = models.AutoField(primary_key=True, unique=True, serialize=True)
     email = models.EmailField(max_length=100, unique=True)
     password = models.CharField(max_length=100)
     username = models.CharField(max_length=100, unique=True)
@@ -42,8 +42,8 @@ class User(AbstractBaseUser):
 
     objects = UserManager()
 
-    REQUIRED_FIELDS = ['password']
-    USERNAME_FIELD = 'username'
+    REQUIRED_FIELDS = []
+    USERNAME_FIELD = 'email'
 
     is_anonymous = False
     is_authenticated = True
@@ -52,7 +52,7 @@ class User(AbstractBaseUser):
 
 
 class Doacao(models.Model):
-    doacaoId = models.AutoField(primary_key=True, unique=True, serialize=True)
+    id = models.AutoField(primary_key=True, unique=True, serialize=True)
     item = models.CharField(max_length=100) # Alterado para CharField para armazenar o item
     doador = models.ForeignKey(to=User, on_delete=models.CASCADE, related_name='doador') # Alterado para ForeignKey para armazenar o doador
     donatario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='donatario') # Alterado para ForeignKey para armazenar o donatário

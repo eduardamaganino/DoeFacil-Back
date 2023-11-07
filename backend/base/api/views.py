@@ -21,13 +21,14 @@ def createUser(request):
     if user_serializer.is_valid():
         user_serializer.save()
         return JsonResponse("Added Successfully!", safe=False)
+    return JsonResponse(user_serializer.errors, safe=False)
 
 @api_view(['GET', 'PUT', 'DELETE'])
-@permission_classes([])
+@permission_classes([IsAuthenticated])
 def userApi(request, id=0):
     if request.method == 'GET':
         if id != 0:
-            user = User.objects.get(userId=id)
+            user = User.objects.get(id=id)
             user_serializer = UserSerializer(user)
             return Response('Fucniona')
         users = User.objects.all()
@@ -46,14 +47,14 @@ def userApi(request, id=0):
         return JsonResponse("Failed to Add.", safe=False)
     elif request.method == 'PUT':
         user_data = JSONParser().parse(request)
-        user = User.objects.get(userId=user_data['userId'])
+        user = User.objects.get(id=user_data['id'])
         user_serializer = UserSerializer(user, data=user_data)
         if user_serializer.is_valid():
             user_serializer.save()
             return JsonResponse("Updated Successfully!", safe=False)
         return JsonResponse("Failed to Update.", safe=False)
     elif request.method == 'DELETE':
-        user = User.objects.get(userId=id)
+        user = User.objects.get(id=id)
         user.delete()
         return JsonResponse("Deleted Succeffully!", safe=False)
 
