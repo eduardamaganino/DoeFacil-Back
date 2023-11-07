@@ -12,8 +12,18 @@ from .serializers import UserSerializer, ItemSerializer, DoacaoSerializer
 
 # Create your views here.
 
-@api_view(['GET', 'POST', 'PUT', 'DELETE'])
-@permission_classes([IsAuthenticated])
+@api_view(['POST'])
+@permission_classes([])
+def createUser(request):
+    user_data = JSONParser().parse(request)
+    user_serializer = UserSerializer(data=user_data)
+    user_serializer.create(user_data)
+    if user_serializer.is_valid():
+        user_serializer.save()
+        return JsonResponse("Added Successfully!", safe=False)
+
+@api_view(['GET', 'PUT', 'DELETE'])
+@permission_classes([])
 def userApi(request, id=0):
     if request.method == 'GET':
         if id != 0:
@@ -26,10 +36,10 @@ def userApi(request, id=0):
     elif request.method == 'POST':
         user_data = JSONParser().parse(request)
         user_serializer = UserSerializer(data=user_data)
-        file = request.FILES['file']
-        mf = file.name.split('.')
-        file.name = str(user_data['userId']) + '.' + mf[1]
-        user_serializer = UserSerializer(data=user_data)
+        # file = request.FILES['file']
+        # mf = file.name.split('.')
+        # file.name = str(user_data['userId']) + '.' + mf[1]
+        # user_serializer = UserSerializer(data=user_data)
         if user_serializer.is_valid():
             user_serializer.save()
             return JsonResponse("Added Successfully!", safe=False)

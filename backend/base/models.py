@@ -1,5 +1,6 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import UserManager
+from django.contrib.auth.models import AbstractBaseUser
 
 # Create your models here.
 
@@ -13,37 +14,49 @@ class Item(models.Model):
     titulo = models.CharField(max_length=100)
     categoria = models.CharField(max_length=100)
 
-class User(models.Model):
+class User(AbstractBaseUser):
     userId = models.AutoField(primary_key=True, unique=True, serialize=True)
     email = models.EmailField(max_length=100, unique=True)
-    senha = models.CharField(max_length=100, unique=True)
-    nome = models.CharField(max_length=100)
+    password = models.CharField(max_length=100)
+    username = models.CharField(max_length=100, unique=True)
     foto = models.FileField(upload_to='media', null=True, blank=True)
-    bio = models.TextField()
-    listaDeDoacao = models.CharField(max_length=100, null=True, blank=True) # Alterado para CharField para armazenar a lista de doações
-    telefone = models.CharField(max_length=100)
-    cpf = models.CharField(max_length=11)  # Alterado para 11 caracteres para representar o CPF
+    bio = models.TextField(null=True, blank=True)
+    listaDeDoacao = models.ManyToManyField(to='Doacao',null=True, blank=True)
+    telefone = models.CharField(max_length=100, null=True, blank=True)
+    cpf = models.CharField(max_length=11, null=True, blank=True)  # Alterado para 11 caracteres para representar o CPF
     idade = models.IntegerField(null=True)
-    sexo = models.CharField(max_length=100)  # Alterado para 1 caractere para representar o sexo
+    sexo = models.CharField(max_length=100,null=True, blank=True)  # Alterado para 1 caractere para representar o sexo
     nota = models.IntegerField(null=True, blank=True)
     countAvaliacao = models.IntegerField(null=True, blank=True)
 
-    rua = models.CharField(max_length=100)
-    numero = models.IntegerField()
-    logradouro = models.CharField(max_length=100)
-    cidade = models.CharField(max_length=100)
-    estado = models.CharField(max_length=100)
-    cep = models.CharField(max_length=10)  # Alterado para CharField para armazenar o CEP corretamente
-    pais = models.CharField(max_length=100)
+    rua = models.CharField(max_length=100, null=True, blank=True)
+    numero = models.IntegerField(null=True, blank=True)
+    logradouro = models.CharField(max_length=100,null=True, blank=True)
+    cidade = models.CharField(max_length=100,null=True, blank=True)
+    estado = models.CharField(max_length=100,null=True, blank=True)
+    cep = models.CharField(max_length=10,null=True, blank=True)  # Alterado para CharField para armazenar o CEP corretamente
+    pais = models.CharField(max_length=100,null=True, blank=True)
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=True)
+    is_superuser = models.BooleanField(default=True)
+
+    objects = UserManager()
+
+    REQUIRED_FIELDS = ['password']
+    USERNAME_FIELD = 'username'
+
+    is_anonymous = False
+    is_authenticated = True
+
 
 
 
 class Doacao(models.Model):
     doacaoId = models.AutoField(primary_key=True, unique=True, serialize=True)
     item = models.CharField(max_length=100) # Alterado para CharField para armazenar o item
-    doador = models.CharField(max_length=100) # Alterado para CharField para armazenar o doador
-    donatario = models.CharField(max_length=100) # Alterado para CharField para armazenar o donatário
-    dataDoacao = models.CharField(max_length=100) # Alterado para CharField para armazenar a data de doação
+    doador = models.ForeignKey(to=User, on_delete=models.CASCADE, related_name='doador') # Alterado para ForeignKey para armazenar o doador
+    donatario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='donatario') # Alterado para ForeignKey para armazenar o donatário
+    dataDoacao = models.DateField(auto_now_add=True)
     recebido = models.CharField(max_length=100)
-    pedidos = models.CharField(max_length=100) # Alterado para CharField para armazenar a lista de pedidos
+    pedidos = models.ManyToManyField(User, related_name='pedidos') # Alterado para ManyToManyField para armazenar os pedidos
 
