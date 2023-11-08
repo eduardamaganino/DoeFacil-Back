@@ -97,8 +97,11 @@ def doacaoApi(request, id=0):
         doacao_serializer = DoacaoSerializer(data=doacao_data)
         if doacao_serializer.is_valid():
             doacao_serializer.save()
-            return JsonResponse("Added Successfully!", safe=False)
-        return JsonResponse("Failed to Add.", safe=False)
+            idDoacao = doacao_serializer.data['id']
+            idUser = doacao_serializer.data['doador']
+            user = User.objects.get(id=idUser)
+        user.listaDeDoacao.add(idDoacao)
+        return JsonResponse("Added Successfully!", safe=False)
     elif request.method == 'PUT':
         doacao_data = JSONParser().parse(request)
         doacao = Doacao.objects.get(id=doacao_data['id'])
@@ -111,15 +114,3 @@ def doacaoApi(request, id=0):
         doacao = Doacao.objects.get(id=id)
         doacao.delete()
         return JsonResponse("Deleted Succeffully!", safe=False)
-
-@api_view(['POST'])
-@permission_classes([IsAuthenticated])
-def doacaoUser(request, id=0):
-    doacao_data = JSONParser().parse(request)
-    doacao_serializer = DoacaoSerializer(data=doacao_data)
-    if doacao_serializer.is_valid():
-        doacao_serializer.save()
-        idDoacao = doacao_serializer.data['id']
-    user = User.objects.get(id=id)
-    user.listaDeDoacao.add(idDoacao)
-    return JsonResponse("Added Successfully!", safe=False)
