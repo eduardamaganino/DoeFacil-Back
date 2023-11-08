@@ -20,6 +20,7 @@ urlpatterns = [
     path('itens/<str:id>', views.itemApi),
     path('doacoes', views.doacaoApi),
     path('doacoes/<str:id>', views.doacaoApi),
+    path('addDoacao/<str:id>', views.doacaoUser),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

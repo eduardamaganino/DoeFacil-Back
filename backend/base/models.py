@@ -53,7 +53,7 @@ class User(AbstractBaseUser):
 
 class Doacao(models.Model):
     id = models.AutoField(primary_key=True, unique=True, serialize=True)
-    item = models.CharField(max_length=100) # Alterado para CharField para armazenar o item
+    item = models.ForeignKey(to=Item, on_delete=models.CASCADE)
     doador = models.ForeignKey(to=User, on_delete=models.CASCADE, related_name='doador') # Alterado para ForeignKey para armazenar o doador
     donatario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='donatario') # Alterado para ForeignKey para armazenar o donatário
     dataDoacao = models.DateField(auto_now_add=True)
