@@ -13,6 +13,7 @@ class Item(models.Model):
     condicao = models.CharField(max_length=100)
     titulo = models.CharField(max_length=100)
     categoria = models.CharField(max_length=100)
+    dono = models.ForeignKey(to='User', on_delete=models.CASCADE, related_name='dono') # Alterado para ForeignKey para armazenar o dono
 
 class User(AbstractBaseUser):
     id = models.AutoField(primary_key=True, unique=True, serialize=True)
@@ -53,7 +54,7 @@ class User(AbstractBaseUser):
 
 class Doacao(models.Model):
     id = models.AutoField(primary_key=True, unique=True, serialize=True)
-    item = models.ForeignKey(to=Item, on_delete=models.CASCADE)
+    item = models.ForeignKey(to=Item, on_delete=models.CASCADE, related_name='item') # Alterado para ForeignKey para armazenar o item
     doador = models.ForeignKey(to=User, on_delete=models.CASCADE, related_name='doador') # Alterado para ForeignKey para armazenar o doador
     donatario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='donatario') # Alterado para ForeignKey para armazenar o donatário
     dataDoacao = models.DateField(auto_now_add=True)

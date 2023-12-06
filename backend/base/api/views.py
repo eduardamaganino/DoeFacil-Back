@@ -97,11 +97,8 @@ def doacaoApi(request, id=0):
         doacao_serializer = DoacaoSerializer(data=doacao_data)
         if doacao_serializer.is_valid():
             doacao_serializer.save()
-            idDoacao = doacao_serializer.data['id']
-            idUser = doacao_serializer.data['doador']
-            user = User.objects.get(id=idUser)
-        user.listaDeDoacao.add(idDoacao)
-        return JsonResponse("Added Successfully!", safe=False)
+            return JsonResponse("Added Successfully!", safe=False)
+        return JsonResponse(doacao_serializer.errors, safe=False)
     elif request.method == 'PUT':
         doacao_data = JSONParser().parse(request)
         doacao = Doacao.objects.get(id=doacao_data['id'])

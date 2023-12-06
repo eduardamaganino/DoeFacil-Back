@@ -7,7 +7,7 @@ from rest_framework import serializers
 class ItemSerializer(ModelSerializer):
     class Meta:
         model = Item
-        fields = ['id', 'motivo', 'quantidade', 'fotos', 'tempoDeUso', 'condicao', 'titulo', 'categoria']
+        fields = ['id', 'motivo', 'quantidade', 'fotos', 'tempoDeUso', 'condicao', 'titulo', 'categoria', 'dono']
 
 
 class UserSerializer(ModelSerializer):
