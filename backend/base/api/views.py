@@ -10,6 +10,8 @@ from rest_framework.response import Response
 from base.models import User, Item, Doacao
 from .serializers import UserSerializer, ItemSerializer
 from .serializers import DoacaoSerializer
+from .pusher import pusher_client
+from rest_framework.views import APIView
 
 # Create your views here.
 
@@ -111,3 +113,15 @@ def doacaoApi(request, id=0):
         doacao = Doacao.objects.get(id=id)
         doacao.delete()
         return JsonResponse("Deleted Succeffully!", safe=False)
+    
+
+
+class MessageAPIView(APIView):
+    # permission_classes = (IsAuthenticated,)
+
+    def post(self, request, format=None):
+        pusher_client.trigger('chat', 'message', {
+            'message': request.data['message'],
+            'username': request.user.username
+        })
+        return Response({'status': 'received'}, status=200)
