@@ -1,3 +1,4 @@
+from datetime import datetime
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 
@@ -122,6 +123,7 @@ class MessageAPIView(APIView):
     def post(self, request, format=None):
         pusher_client.trigger('chat', 'message', {
             'message': request.data['message'],
-            'username': request.user.username
+            'username': request.user.username,
+            'created_at': str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")),
         })
         return Response({'status': 'received'}, status=200)
