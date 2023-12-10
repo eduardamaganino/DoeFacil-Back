@@ -11,7 +11,19 @@ from base.models import User, Item, Doacao
 from .serializers import UserSerializer, ItemSerializer
 from .serializers import DoacaoSerializer
 
+from django.core.files.storage import default_storage
+from datetime import date
+
+
 # Create your views here.
+
+@csrf_exempt
+@api_view(['POST'])
+def handle_uploaded_file(request):
+    file = request.FILES['file']
+    file_name = default_storage.save(file.name, file)
+
+    return JsonResponse({'file_name': file_name})
 
 @api_view(['POST'])
 @permission_classes([])
@@ -19,6 +31,22 @@ def createUser(request):
     user_data = JSONParser().parse(request)
     user_serializer = UserSerializer(data=user_data)
     return user_serializer.create(user_data)
+
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def updateUser(request, id):
+    user_data = JSONParser().parse(request)
+    user_data['punicao'] = date.today()  # Atualiza o campo punicao com a data atual
+    try:
+        user = User.objects.get(id=id)
+        user_serializer = UserSerializer(user, data=user_data, partial=True)
+        if user_serializer.is_valid():
+            user_serializer.save()
+            return JsonResponse("Updated Punicao Successfully!", safe=False)
+        return JsonResponse(user_serializer.errors, safe=False)
+    except User.DoesNotExist:
+        return JsonResponse("User not found.", safe=False)
 
 
 @api_view(['GET', 'PUT', 'DELETE'])

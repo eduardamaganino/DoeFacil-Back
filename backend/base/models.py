@@ -13,7 +13,7 @@ class Item(models.Model):
     condicao = models.CharField(max_length=100)
     titulo = models.CharField(max_length=100)
     categoria = models.CharField(max_length=100)
-    dono = models.ForeignKey(to='User', on_delete=models.CASCADE, related_name='dono') # Alterado para ForeignKey para armazenar o dono
+    dono = models.CharField(max_length=100)
 
 class User(AbstractBaseUser):
     id = models.AutoField(primary_key=True, unique=True, serialize=True)
@@ -29,6 +29,7 @@ class User(AbstractBaseUser):
     sexo = models.CharField(max_length=100,null=True, blank=True)  # Alterado para 1 caractere para representar o sexo
     nota = models.IntegerField(null=True, blank=True)
     countAvaliacao = models.IntegerField(null=True, blank=True)
+    punicao = models.DateField(null=True, blank=True)
 
     rua = models.CharField(max_length=100, null=True, blank=True)
     numero = models.IntegerField(null=True, blank=True)
