@@ -30,6 +30,7 @@ class User(AbstractBaseUser):
     sexo = models.CharField(max_length=100,null=True, blank=True)  # Alterado para 1 caractere para representar o sexo
     nota = models.IntegerField(null=True, blank=True)
     countAvaliacao = models.IntegerField(null=True, blank=True)
+    punicao = models.DateField(null=True, blank=True)
 
     rua = models.CharField(max_length=100, null=True, blank=True)
     numero = models.IntegerField(null=True, blank=True)

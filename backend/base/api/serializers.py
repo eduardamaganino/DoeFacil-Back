@@ -15,7 +15,7 @@ class UserSerializer(ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['id', 'email', 'password', 'username', 'foto', 'bio', 'listaDeDoacao', 'telefone', 'cpf', 'idade', 'sexo', 'nota', 'countAvaliacao', 'rua', 'numero', 'logradouro', 'cidade', 'estado', 'cep', 'pais', 'is_active']
+        fields = ['id', 'email', 'password', 'username', 'foto', 'bio', 'listaDeDoacao', 'telefone', 'cpf', 'idade', 'sexo', 'nota', 'countAvaliacao', 'rua', 'numero', 'logradouro', 'cidade', 'estado', 'cep', 'pais', 'punicao', 'is_active']
     
     def create(self, validated_data):
         listaDeDoacao_data = validated_data.pop('listaDeDoacao', None)
