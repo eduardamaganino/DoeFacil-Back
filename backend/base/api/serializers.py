@@ -1,13 +1,13 @@
 from django.http import JsonResponse
 from rest_framework.serializers import ModelSerializer
-from base.models import User, Item, Doacao
+from base.models import Message, User, Item, Doacao
 from rest_framework import serializers
 
 
 class ItemSerializer(ModelSerializer):
     class Meta:
         model = Item
-        fields = ['id', 'motivo', 'quantidade', 'fotos', 'tempoDeUso', 'condicao', 'titulo', 'categoria', 'dono']
+        fields = ['id', 'motivo', 'quantidade', 'fotos', 'tempoDeUso', 'condicao', 'titulo', 'categoria', 'dono', 'recebido']
 
 
 class UserSerializer(ModelSerializer):
@@ -40,3 +40,12 @@ class DoacaoSerializer(ModelSerializer):
     class Meta:
         model = Doacao
         fields = ['id', 'item', 'item_detail', 'doador', 'doador_detail', 'donatario', 'donatario_detail', 'dataDoacao', 'recebido', 'pedidos', 'pedidos_detail']
+
+class MessageSerializer(ModelSerializer):
+    user_detail = UserSerializer(source='user', read_only=True)
+    user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
+    print(user_detail)
+
+    class Meta:
+        model = Message
+        fields = ['id', 'user', 'user_detail', 'message', 'type', 'created_at', 'donationId']

@@ -6,6 +6,7 @@ from rest_framework_simplejwt.views import (
 )
 from django.conf import settings
 from django.conf.urls.static import static
+# from .views import MessageAPIView
 
 urlpatterns = [
     #path('', views.getRoutes),
@@ -22,7 +23,8 @@ urlpatterns = [
     path('doacoes', views.doacaoApi),
     path('doacoes/<str:id>', views.doacaoApi),
     path('upload', views.handle_uploaded_file, name='handle_uploaded_file'),
-
+    path('message', views.messageApi),
+    path('message/<str:donationId>', views.messageApi),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
