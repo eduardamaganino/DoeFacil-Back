@@ -14,6 +14,7 @@ class Item(models.Model):
     titulo = models.CharField(max_length=100)
     categoria = models.CharField(max_length=100)
     dono = models.ForeignKey(to='User', on_delete=models.CASCADE, related_name='dono') # Alterado para ForeignKey para armazenar o dono
+    recebido = models.BooleanField(default=False)
 
 class User(AbstractBaseUser):
     id = models.AutoField(primary_key=True, unique=True, serialize=True)
@@ -60,4 +61,13 @@ class Doacao(models.Model):
     dataDoacao = models.DateField(auto_now_add=True)
     recebido = models.CharField(max_length=100)
     pedidos = models.ManyToManyField(User, related_name='pedidos') # Alterado para ManyToManyField para armazenar os pedidos
+
+class Message(models.Model):
+    id = models.AutoField(primary_key=True, unique=True, serialize=True)
+    user = models.ForeignKey(to=User, on_delete=models.CASCADE, related_name='user')
+    message = models.CharField(max_length=100)
+    created_at = models.CharField(max_length=100)
+    type = models.CharField(max_length=100)
+    donationId = models.IntegerField(null=True, blank=True)
+    
 
