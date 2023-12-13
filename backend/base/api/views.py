@@ -1,3 +1,4 @@
+from datetime import datetime
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 
@@ -7,9 +8,11 @@ from django.http import JsonResponse
 from rest_framework.response import Response
 
 
-from base.models import User, Item, Doacao
-from .serializers import UserSerializer, ItemSerializer
+from base.models import Message, User, Item, Doacao
+from .serializers import MessageSerializer, UserSerializer, ItemSerializer
 from .serializers import DoacaoSerializer
+from .pusher import pusher_client
+from rest_framework.views import APIView
 
 # Create your views here.
 
@@ -97,8 +100,8 @@ def doacaoApi(request, id=0):
         doacao_serializer = DoacaoSerializer(data=doacao_data)
         if doacao_serializer.is_valid():
             doacao_serializer.save()
-            return JsonResponse("Added Successfully!", safe=False)
-        return JsonResponse(doacao_serializer.errors, safe=False)
+            return Response(doacao_serializer.data, status=201)
+        return Response(doacao_serializer.errors, status=400)
     elif request.method == 'PUT':
         doacao_data = JSONParser().parse(request)
         doacao = Doacao.objects.get(id=doacao_data['id'])
@@ -111,3 +114,53 @@ def doacaoApi(request, id=0):
         doacao = Doacao.objects.get(id=id)
         doacao.delete()
         return JsonResponse("Deleted Succeffully!", safe=False)
+    
+
+
+# class MessageAPIView(APIView):
+#     # permission_classes = (IsAuthenticated,)
+
+#     @api_view(['POST'])
+#     def messagePost(self, request, format=None):
+        
+    
+#     @api_view(['GET'])
+#     def get(self, request, format=None):
+#         messages = Message.objects.filter(donationId=request.data['donationId'])
+#         message_serializer = MessageSerializer(messages, many=True)
+#         return Response(message_serializer.data, status=200)
+
+@api_view(['GET', 'POST', 'PUT', 'DELETE'])
+@permission_classes([IsAuthenticated])
+def messageApi(request, donationId=None):
+    if(request.method == 'POST'):
+        pusher_client.trigger('chat', 'message', {
+            'message': request.data['message'],
+            'username': request.user.username,
+            'created_at': str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")),
+            'type': request.data['type'],
+            'donationId': request.data['donationId']
+        })
+
+        message_data = {
+            'user': request.user.id,
+            'message': request.data['message'],
+            'type': request.data['type'],
+            'donationId': request.data['donationId'],
+            'created_at': str(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+        }
+        message_serializer = MessageSerializer(data=message_data)
+        if message_serializer.is_valid():
+            message_serializer.save()
+            return Response(message_serializer.data, status=201)
+        return Response(message_serializer.errors, status=400)
+
+    elif(request.method == 'GET'):
+        messages = Message.objects.filter(donationId=donationId)
+        message_serializer = MessageSerializer(messages, many=True)
+        return Response(message_serializer.data, status=200)
+    
+    elif(request.method == 'DELETE'):
+        messages = Message.objects.filter(donationId=donationId)
+        messages.delete()
+        return Response("Deleted Succeffully!", status=200)
